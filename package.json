@@ -1,0 +1,38 @@
+{
+  "name": "analytics-server",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "parcel": "^2.8.3"
+  },
+  "dependencies": {
+    "@fastify/auth": "^4.2.0",
+    "@fastify/compress": "^6.2.1",
+    "@fastify/cors": "^8.2.1",
+    "@fastify/helmet": "^10.1.0",
+    "@fastify/jwt": "^6.7.1",
+    "@fastify/one-line-logger": "^1.1.1",
+    "@fastify/rate-limit": "^8.0.0",
+    "bcrypt": "^5.1.0",
+    "chalk": "^5.2.0",
+    "dotenv": "^16.0.3",
+    "fastify": "^4.15.0",
+    "mongoose": "^7.0.3",
+    "nanoid": "^4.0.2",
+    "nodemailer": "^6.9.1",
+    "request": "^2.88.2",
+    "useragent": "^2.3.0",
+    "yamlparser": "^0.0.2"
+  }
+}
