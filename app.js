@@ -1,14 +1,18 @@
 import fastifyServer from "fastify";
 import cors from "@fastify/cors";
-import useragent from "useragent";
 
 import trackingRoutes from "./routes/tracking.routes.js";
 
-useragent(true);
-
 const fastify = fastifyServer();
-fastify.register(cors, {
-  origin: "*",
+fastify.register(cors, (instance) => {
+  return (req, callback) => {
+    const corsOptions = {
+      origin: "*",
+      methods: ["GET", "POST", "OPTIONS"],
+    };
+
+    callback(null, corsOptions);
+  };
 });
 fastify.register(trackingRoutes, { prefix: "/v1/:analyticsId" });
 
