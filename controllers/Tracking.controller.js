@@ -1,4 +1,4 @@
-import { nanoid } from "nanoid";
+import { randomUUID } from "crypto";
 import Bowser from "bowser";
 import maxmind from "maxmind";
 import path, { dirname } from "path";
@@ -40,7 +40,7 @@ async function getLocationFromIp(ip) {
   }
 }
 
-async function trackEvent(request, reply) {
+async function trackEvent(request) {
   try {
     console.log("\nTracking Event");
     const body = request.body;
@@ -55,16 +55,16 @@ async function trackEvent(request, reply) {
   }
 }
 
-function trackSession(request, reply) {
+function trackSession(request) {
   console.log("\nTracking Session");
   const body = request.body;
   console.log("session", body);
   return { success: true };
 }
 
-function getTrackingId(request, reply) {
+function getTrackingId() {
   console.log("\nGet Tracking ID");
-  return { id: `UOA-${nanoid()}` };
+  return { id: `OAU-${nanoid()}` };
 }
 
 function getEvents(request, reply) {
