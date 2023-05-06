@@ -32,6 +32,7 @@
     "maxmind": "^4.3.11",
     "mongoose": "^7.1.0",
     "nanoid": "^4.0.2",
+    "node-cron": "^3.0.2",
     "nodemailer": "^6.9.1",
     "request": "^2.88.2",
     "targz": "^1.0.1",
