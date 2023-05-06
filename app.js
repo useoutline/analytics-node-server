@@ -6,8 +6,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import trackingRoutes from "./routes/tracking.routes.js";
-import AppModel from "./models/App.model.js";
-import UserModel from "./models/User.model.js";
+import { downloadMaxmindDB } from "./utils/maxmind.js";
+// import AppModel from "./models/App.model.js";
+// import UserModel from "./models/User.model.js";
 
 const fastify = fastifyServer();
 fastify.register(cors, (instance) => {
@@ -26,6 +27,7 @@ const start = async () => {
   try {
     const server = await fastify.listen({ port: 3000 });
     await mongoose.connect(process.env.MONGO_URL);
+    downloadMaxmindDB();
     // const user = new UserModel({
     //   email: "hello@shrinath.me",
     // });

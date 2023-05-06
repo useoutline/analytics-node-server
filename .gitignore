@@ -1,2 +1,4 @@
 node_modules/
+maxmind/
+maxmind.tar.gz
 .env
