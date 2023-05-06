@@ -34,6 +34,7 @@
     "nanoid": "^4.0.2",
     "nodemailer": "^6.9.1",
     "request": "^2.88.2",
+    "targz": "^1.0.1",
     "yamlparser": "^0.0.2"
   }
 }
