@@ -1,8 +1,12 @@
-import { randomUUID } from "crypto";
+import { nanoid } from "nanoid";
 import Bowser from "bowser";
 import maxmind from "maxmind";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
+
+import EventModel from "../models/Event.model.js";
+import SessionModel from "../models/Session.model.js";
+import AppModel from "../models/App.model.js";
 
 function getUserAgentDetails(headers) {
   const useragent = headers["user-agent"];
@@ -30,8 +34,11 @@ async function getLocationFromIp(ip) {
       city: ipDetails.city.names.en,
       country: ipDetails.country.names.en,
       coords: {
-        lat: ipDetails.location.latitude,
-        lon: ipDetails.location.longitude,
+        type: "Point",
+        coordinates: [
+          ipDetails.location.longitude,
+          ipDetails.location.latitude,
+        ],
       },
       timezone: ipDetails.location.time_zone,
     };
@@ -43,45 +50,72 @@ async function getLocationFromIp(ip) {
 async function trackEvent(request) {
   try {
     console.log("\nTracking Event");
-    const body = request.body;
-    const browserDetails = getUserAgentDetails(request.headers);
-    console.log(browserDetails);
+    const { browser, os, platform, meta } = getUserAgentDetails(
+      request.headers
+    );
     const ipDetails = await getLocationFromIp(request.ip);
-    console.log("event", body);
-    console.log("event", ipDetails);
+    const body = JSON.parse(request.body);
+
+    const event = new EventModel({
+      app: request.params.analyticsId,
+      user: body.uid,
+      event: body.event,
+      eventType: body.type,
+      page: body.page,
+      browsingData: {
+        browser,
+        os,
+        platform,
+        city: ipDetails?.city,
+        country: ipDetails?.country,
+        coords: ipDetails?.coords,
+        timezone: ipDetails?.timezone,
+        meta,
+      },
+    });
+    await event.save();
     return { success: true };
   } catch (err) {
     console.error(err);
   }
 }
 
-function trackSession(request) {
+async function trackSession(request) {
   console.log("\nTracking Session");
-  const body = request.body;
-  console.log("session", body);
+  const { browser, os, platform, meta } = getUserAgentDetails(request.headers);
+  const ipDetails = await getLocationFromIp(request.ip);
+  const body = JSON.parse(request.body);
+
+  const session = new SessionModel({
+    app: request.params.analyticsId,
+    user: body.uid,
+    visitedAt: body.visitedAt,
+    leftAt: body.leftAt,
+    page: body.page,
+    browsingData: {
+      browser,
+      os,
+      platform,
+      city: ipDetails?.city,
+      country: ipDetails?.country,
+      coords: ipDetails?.coords,
+      timezone: ipDetails?.timezone,
+      meta,
+    },
+  });
+  await session.save();
   return { success: true };
 }
 
-function getTrackingId() {
-  console.log("\nGet Tracking ID");
+async function getTrackingId() {
   return { id: `OAU-${nanoid()}` };
 }
 
-function getEvents(request, reply) {
-  console.log("\nGet Events");
+async function getEvents(request) {
+  const analyticsId = request.params.analyticsId;
+  const { events } = await AppModel.findById(analyticsId, "events").lean();
   return {
-    events: [
-      {
-        event: "lets-connect-click",
-        selector: "#lets-connect",
-        trigger: "click",
-      },
-      {
-        event: "read-blog-click",
-        selector: "#read-my-blog",
-        trigger: "click",
-      },
-    ],
+    events,
   };
 }
 
