@@ -24,7 +24,10 @@ fastify.register(trackingRoutes, { prefix: "/v1/:analyticsId" });
 
 const start = async () => {
   try {
-    const server = await fastify.listen({ port: process.env.PORT || 3000 });
+    const server = await fastify.listen({
+      port: process.env.PORT || 3000,
+      host: process.env.HOST || "127.0.0.1",
+    });
     await mongoose.connect(process.env.MONGO_URL);
     downloadMaxmindDB(); // Download DB on server start
     cron.schedule("12 0 * * 3,6", downloadMaxmindDB); // Download new DB every Wednesday and Saturday at 12:00 PM
