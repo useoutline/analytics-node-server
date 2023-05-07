@@ -28,7 +28,7 @@ const start = async () => {
     await mongoose.connect(process.env.MONGO_URL);
     downloadMaxmindDB(); // Download DB on server start
     cron.schedule("12 0 * * 3,6", downloadMaxmindDB); // Download new DB every Wednesday and Saturday at 12:00 PM
-    console.log(server);
+    console.log(`Server started at ${server}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

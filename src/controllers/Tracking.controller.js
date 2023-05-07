@@ -1,59 +1,24 @@
 import { nanoid } from "nanoid";
-import Bowser from "bowser";
-import maxmind from "maxmind";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
 
 import EventModel from "../models/Event.model.js";
 import SessionModel from "../models/Session.model.js";
 import AppModel from "../models/App.model.js";
-
-function getUserAgentDetails(headers) {
-  const useragent = headers["user-agent"];
-  const isBrave = headers["x-browser-brave"];
-  const browserDetails = Bowser.parse(useragent);
-  return {
-    browser: isBrave === "1" ? "Brave" : browserDetails.browser.name,
-    os: browserDetails.os.name,
-    platform: browserDetails.platform.type,
-    meta: {
-      ...browserDetails,
-    },
-  };
-}
-
-async function getLocationFromIp(ip) {
-  const dbPath = path.resolve(
-    dirname(fileURLToPath(import.meta.url)),
-    "../maxmind/GeoLite2-City.mmdb"
-  );
-  const lookup = await maxmind.open(dbPath);
-  const ipDetails = lookup.get(ip);
-  if (ipDetails) {
-    return {
-      city: ipDetails.city.names.en,
-      country: ipDetails.country.names.en,
-      coords: {
-        type: "Point",
-        coordinates: [
-          ipDetails.location.longitude,
-          ipDetails.location.latitude,
-        ],
-      },
-      timezone: ipDetails.location.time_zone,
-    };
-  } else {
-    return null;
-  }
-}
+import {
+  getLocationFromIp,
+  getUserAgentDetails,
+} from "../utils/getBrowsingData.js";
 
 async function trackEvent(request) {
   try {
-    console.log("\nTracking Event");
+    console.log("Tracking Event", Date.now());
     const { browser, os, platform, meta } = getUserAgentDetails(
       request.headers
     );
-    const ipDetails = await getLocationFromIp(request.ip);
+    const ip =
+      request.headers["x-forwarded-for"] ||
+      request.socket.remoteAddress ||
+      request.ip;
+    const ipDetails = await getLocationFromIp(ip);
     const body = JSON.parse(request.body);
 
     const event = new EventModel({
@@ -81,9 +46,13 @@ async function trackEvent(request) {
 }
 
 async function trackSession(request) {
-  console.log("\nTracking Session");
+  console.log("Tracking Session", Date.now());
   const { browser, os, platform, meta } = getUserAgentDetails(request.headers);
-  const ipDetails = await getLocationFromIp(request.ip);
+  const ip =
+    request.headers["x-forwarded-for"] ||
+    request.socket.remoteAddress ||
+    request.ip;
+  const ipDetails = await getLocationFromIp(ip);
   const body = JSON.parse(request.body);
 
   const session = new SessionModel({

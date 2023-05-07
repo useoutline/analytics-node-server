@@ -6,7 +6,11 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js"
+    "dev": "nodemon src/app.js",
+    "start": "pm2 start src/app.js --name analytics-server",
+    "monitor": "pm2 monit",
+    "logs": "pm2 logs",
+    "stop": "pm2 stop analytics-server"
   },
   "keywords": [],
   "author": "",
@@ -14,7 +18,8 @@
   "devDependencies": {
     "jest": "^29.5.0",
     "nodemon": "^2.0.22",
-    "parcel": "^2.8.3"
+    "parcel": "^2.8.3",
+    "pm2": "^5.3.0"
   },
   "dependencies": {
     "@fastify/auth": "^4.2.0",

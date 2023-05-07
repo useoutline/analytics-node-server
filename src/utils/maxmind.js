@@ -21,7 +21,7 @@ function downloadMaxmindDB() {
         },
         function (err) {
           if (err) {
-            console.log(err);
+            console.error(err);
           } else {
             fs.rmSync(MAXMIND_DB_PATH);
             const subDirs = fs.readdirSync(MAXMIND_OUTPUT_PATH);
@@ -40,7 +40,7 @@ function downloadMaxmindDB() {
                 });
               }
             });
-            console.log("Done!", subDirs);
+            console.log("Maxmind db updated!");
           }
         }
       );
