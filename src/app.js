@@ -30,6 +30,7 @@ const start = async () => {
     cron.schedule("12 0 * * 3,6", downloadMaxmindDB); // Download new DB every Wednesday and Saturday at 12:00 PM
     console.log(`Server started at ${server}`);
   } catch (err) {
+    console.log(err);
     fastify.log.error(err);
     process.exit(1);
   }
