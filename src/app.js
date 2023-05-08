@@ -25,6 +25,7 @@ if (process.env.SSL_KEY && process.env.SSL_CERT) {
 
 if (process.env.NODE_ENV === "production") {
   fastifyOptions.logger = { level: "info" };
+  fastifyOptions.trustProxy = true;
 }
 
 const fastify = fastifyServer(fastifyOptions);

@@ -8,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/app.js",
     "start": "pm2 start src/app.js --name analytics-server",
+    "restart": "pm2 restart analytics-server",
     "monitor": "pm2 monit",
     "logs": "pm2 logs",
     "stop": "pm2 stop analytics-server"
