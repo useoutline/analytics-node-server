@@ -14,6 +14,11 @@ async function trackEvent(request) {
     const { browser, os, platform, meta } = getUserAgentDetails(
       request.headers
     );
+    console.log(
+      request.headers["x-forwarded-for"],
+      request.socket.remoteAddress,
+      request.ip
+    );
     const ip =
       request.headers["x-forwarded-for"] ||
       request.socket.remoteAddress ||
@@ -48,6 +53,11 @@ async function trackEvent(request) {
 async function trackSession(request) {
   console.log("Tracking Session", Date.now());
   const { browser, os, platform, meta } = getUserAgentDetails(request.headers);
+  console.log(
+    request.headers["x-forwarded-for"],
+    request.socket.remoteAddress,
+    request.ip
+  );
   const ip =
     request.headers["x-forwarded-for"] ||
     request.socket.remoteAddress ||
