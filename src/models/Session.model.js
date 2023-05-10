@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import BrowsingDataSchema from "./BrowsingData.schema.js";
 import PageDataSchema from "./PageData.schema.js";
+import UtmSchema from "./Utm.schema.js";
 
 const sessionSchema = new mongoose.Schema(
   {
@@ -21,6 +22,10 @@ const sessionSchema = new mongoose.Schema(
     },
     page: PageDataSchema,
     browsingData: BrowsingDataSchema,
+    referrer: {
+      type: String,
+    },
+    utm: UtmSchema,
   },
   {
     timestamps: true,

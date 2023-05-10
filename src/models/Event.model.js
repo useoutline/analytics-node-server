@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import BrowsingDataSchema from "./BrowsingData.schema.js";
 import PageDataSchema from "./PageData.schema.js";
+import UtmSchema from "./Utm.schema.js";
 
 const eventSchema = new mongoose.Schema(
   {
@@ -22,6 +23,10 @@ const eventSchema = new mongoose.Schema(
     },
     page: PageDataSchema,
     browsingData: BrowsingDataSchema,
+    referrer: {
+      type: String,
+    },
+    utm: UtmSchema,
   },
   {
     timestamps: true,
