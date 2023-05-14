@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
-import BrowsingDataSchema from "./BrowsingData.schema.js";
-import PageDataSchema from "./PageData.schema.js";
-import UtmSchema from "./Utm.schema.js";
+import mongoose from 'mongoose'
+import BrowsingDataSchema from './BrowsingData.schema.js'
+import PageDataSchema from './PageData.schema.js'
+import UtmSchema from './Utm.schema.js'
 
 const eventSchema = new mongoose.Schema(
   {
     app: {
       type: String,
       required: true,
-      ref: "apps",
+      ref: 'apps',
     },
     user: {
       type: String,
@@ -32,8 +32,8 @@ const eventSchema = new mongoose.Schema(
     timestamps: true,
     __v: false,
   }
-);
+)
 
-const EventModel = mongoose.model("events", eventSchema);
+const EventModel = mongoose.model('events', eventSchema)
 
-export default EventModel;
+export default EventModel

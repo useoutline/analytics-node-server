@@ -1,23 +1,21 @@
-import { nanoid } from "nanoid";
+import { nanoid } from 'nanoid'
 
-import EventModel from "../models/Event.model.js";
-import SessionModel from "../models/Session.model.js";
-import AppModel from "../models/App.model.js";
+import EventModel from '../models/Event.model.js'
+import SessionModel from '../models/Session.model.js'
+import AppModel from '../models/App.model.js'
 import {
   getBrowsingData,
   getLocationFromIp,
   getUserAgentDetails,
   getUtmData,
-} from "../utils/getBrowsingData.js";
+} from '../utils/getBrowsingData.js'
 
 async function trackEvent(request) {
   try {
-    console.log("Tracking Event", Date.now());
-    const { browser, os, platform, meta } = getUserAgentDetails(
-      request.headers
-    );
-    const ipDetails = await getLocationFromIp(request.headers, request.ip);
-    const body = JSON.parse(request.body);
+    console.log('Tracking Event', Date.now())
+    const { browser, os, platform, meta } = getUserAgentDetails(request.headers)
+    const ipDetails = await getLocationFromIp(request.headers, request.ip)
+    const body = JSON.parse(request.body)
 
     const event = new EventModel({
       app: request.params.analyticsId,
@@ -34,19 +32,19 @@ async function trackEvent(request) {
       }),
       referrer: body.page.meta?.referrer,
       utm: getUtmData(body.page.meta),
-    });
-    await event.save();
-    return { success: true };
+    })
+    await event.save()
+    return { success: true }
   } catch (err) {
-    console.error(err);
+    console.error(err)
   }
 }
 
 async function trackSession(request) {
-  console.log("Tracking Session", Date.now());
-  const { browser, os, platform, meta } = getUserAgentDetails(request.headers);
-  const ipDetails = await getLocationFromIp(request.headers, request.ip);
-  const body = JSON.parse(request.body);
+  console.log('Tracking Session', Date.now())
+  const { browser, os, platform, meta } = getUserAgentDetails(request.headers)
+  const ipDetails = await getLocationFromIp(request.headers, request.ip)
+  const body = JSON.parse(request.body)
 
   const session = new SessionModel({
     app: request.params.analyticsId,
@@ -63,21 +61,21 @@ async function trackSession(request) {
     }),
     referrer: body.page.meta?.referrer,
     utm: getUtmData(body.page.meta),
-  });
-  await session.save();
-  return { success: true };
+  })
+  await session.save()
+  return { success: true }
 }
 
 async function getTrackingId() {
-  return { id: `OAU-${nanoid()}` };
+  return { id: `OAU-${nanoid()}` }
 }
 
 async function getEvents(request) {
-  const analyticsId = request.params.analyticsId;
-  const { events } = await AppModel.findById(analyticsId, "events").lean();
+  const analyticsId = request.params.analyticsId
+  const { events } = await AppModel.findById(analyticsId, 'events').lean()
   return {
     events,
-  };
+  }
 }
 
 export default {
@@ -85,4 +83,4 @@ export default {
   trackSession,
   getTrackingId,
   getEvents,
-};
+}

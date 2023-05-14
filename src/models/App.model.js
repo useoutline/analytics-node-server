@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { nanoid } from "nanoid";
+import mongoose from 'mongoose'
+import { nanoid } from 'nanoid'
 
 const appSchema = new mongoose.Schema(
   {
@@ -10,11 +10,11 @@ const appSchema = new mongoose.Schema(
     user: {
       type: String,
       required: true,
-      ref: "users",
+      ref: 'users',
     },
     name: {
       type: String,
-      required: [true, "App name is required"],
+      required: [true, 'App name is required'],
     },
     description: {
       type: String,
@@ -28,10 +28,10 @@ const appSchema = new mongoose.Schema(
         selectorType: {
           type: String,
           required: true,
-          default: "selector",
+          default: 'selector',
           validate: {
             validator: function (v) {
-              return ["id", "text", "selector"].includes(v);
+              return ['id', 'text', 'selector'].includes(v)
             },
           },
         },
@@ -55,8 +55,8 @@ const appSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
-);
+)
 
-const AppModel = mongoose.model("apps", appSchema);
+const AppModel = mongoose.model('apps', appSchema)
 
-export default AppModel;
+export default AppModel

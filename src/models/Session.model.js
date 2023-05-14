@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
-import BrowsingDataSchema from "./BrowsingData.schema.js";
-import PageDataSchema from "./PageData.schema.js";
-import UtmSchema from "./Utm.schema.js";
+import mongoose from 'mongoose'
+import BrowsingDataSchema from './BrowsingData.schema.js'
+import PageDataSchema from './PageData.schema.js'
+import UtmSchema from './Utm.schema.js'
 
 const sessionSchema = new mongoose.Schema(
   {
     app: {
       type: String,
       required: true,
-      ref: "apps",
+      ref: 'apps',
     },
     user: {
       type: String,
@@ -31,8 +31,8 @@ const sessionSchema = new mongoose.Schema(
     timestamps: true,
     __v: false,
   }
-);
+)
 
-const SessionModel = mongoose.model("sessions", sessionSchema);
+const SessionModel = mongoose.model('sessions', sessionSchema)
 
-export default SessionModel;
+export default SessionModel

@@ -1,19 +1,19 @@
-import https from "https";
-import fs from "fs";
-import targz from "targz";
-import path from "path";
+import https from 'https'
+import fs from 'fs'
+import targz from 'targz'
+import path from 'path'
 
-const MAXMIND_DB_PATH = "maxmind.tar.gz";
-const MAXMIND_OUTPUT_PATH = "maxmind";
+const MAXMIND_DB_PATH = 'maxmind.tar.gz'
+const MAXMIND_OUTPUT_PATH = 'maxmind'
 
 function downloadMaxmindDB() {
-  const file = fs.createWriteStream(MAXMIND_DB_PATH);
+  const file = fs.createWriteStream(MAXMIND_DB_PATH)
   https.get(process.env.MAXMIND_DB_URL, function (response) {
-    response.pipe(file);
+    response.pipe(file)
 
-    file.on("finish", () => {
-      file.close();
-      console.log("Download Completed");
+    file.on('finish', () => {
+      file.close()
+      console.log('Download Completed')
       targz.decompress(
         {
           src: MAXMIND_DB_PATH,
@@ -21,31 +21,31 @@ function downloadMaxmindDB() {
         },
         function (err) {
           if (err) {
-            console.error(err);
+            console.error(err)
           } else {
-            fs.rmSync(MAXMIND_DB_PATH);
-            const subDirs = fs.readdirSync(MAXMIND_OUTPUT_PATH);
+            fs.rmSync(MAXMIND_DB_PATH)
+            const subDirs = fs.readdirSync(MAXMIND_OUTPUT_PATH)
             subDirs.forEach((subDir) => {
               const isDirectory = fs
                 .statSync(path.resolve(MAXMIND_OUTPUT_PATH, subDir))
-                .isDirectory();
+                .isDirectory()
               if (isDirectory) {
                 fs.copyFileSync(
                   `${MAXMIND_OUTPUT_PATH}/${subDir}/GeoLite2-City.mmdb`,
                   `${MAXMIND_OUTPUT_PATH}/GeoLite2-City.mmdb`
-                );
+                )
                 fs.rmSync(`${MAXMIND_OUTPUT_PATH}/${subDir}`, {
                   recursive: true,
                   force: true,
-                });
+                })
               }
-            });
-            console.log("Maxmind db updated!");
+            })
+            console.log('Maxmind db updated!')
           }
         }
-      );
-    });
-  });
+      )
+    })
+  })
 }
 
-export { downloadMaxmindDB };
+export { downloadMaxmindDB }

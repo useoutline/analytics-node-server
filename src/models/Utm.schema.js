@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 const UtmSchema = new mongoose.Schema({
   utm_source: {
@@ -16,6 +16,6 @@ const UtmSchema = new mongoose.Schema({
   utm_content: {
     type: String,
   },
-});
+})
 
-export default UtmSchema;
+export default UtmSchema

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 const BrowsingDataSchema = new mongoose.Schema({
   browser: {
@@ -41,6 +41,6 @@ const BrowsingDataSchema = new mongoose.Schema({
   meta: {
     type: Object,
   },
-});
+})
 
-export default BrowsingDataSchema;
+export default BrowsingDataSchema

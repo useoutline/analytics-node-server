@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 const PageDataSchema = new mongoose.Schema({
   path: {
@@ -16,6 +16,6 @@ const PageDataSchema = new mongoose.Schema({
   title: {
     type: String,
   },
-});
+})
 
-export default PageDataSchema;
+export default PageDataSchema

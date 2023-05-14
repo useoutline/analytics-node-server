@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { randomUUID } from "crypto";
+import mongoose from 'mongoose'
+import { randomUUID } from 'crypto'
 
 const userSchema = new mongoose.Schema(
   {
@@ -19,8 +19,8 @@ const userSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
-);
+)
 
-const UserModel = mongoose.model("users", userSchema);
+const UserModel = mongoose.model('users', userSchema)
 
-export default UserModel;
+export default UserModel

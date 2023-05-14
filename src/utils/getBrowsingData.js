@@ -1,35 +1,35 @@
-import Bowser from "bowser";
-import maxmind from "maxmind";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
+import Bowser from 'bowser'
+import maxmind from 'maxmind'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
 function getUserAgentDetails(headers) {
-  const useragent = headers["user-agent"];
-  const isBrave = headers["x-browser-brave"];
-  const browserDetails = Bowser.parse(useragent);
+  const useragent = headers['user-agent']
+  const isBrave = headers['x-browser-brave']
+  const browserDetails = Bowser.parse(useragent)
   return {
-    browser: isBrave === "1" ? "Brave" : browserDetails.browser.name,
+    browser: isBrave === '1' ? 'Brave' : browserDetails.browser.name,
     os: browserDetails.os.name,
     platform: browserDetails.platform.type,
     meta: {
       ...browserDetails,
     },
-  };
+  }
 }
 
 async function getLocationFromIp(headers, requestIP) {
   const ip =
-    headers["x-forwarded-for"] ||
-    headers["X-Forwarded-For"] ||
-    headers["x-real-ip"] ||
-    headers["X-Real-IP"] ||
-    requestIP;
+    headers['x-forwarded-for'] ||
+    headers['X-Forwarded-For'] ||
+    headers['x-real-ip'] ||
+    headers['X-Real-IP'] ||
+    requestIP
   const dbPath = path.resolve(
     dirname(fileURLToPath(import.meta.url)),
-    "../../maxmind/GeoLite2-City.mmdb"
-  );
-  const lookup = await maxmind.open(dbPath);
-  const ipDetails = lookup.get(ip);
+    '../../maxmind/GeoLite2-City.mmdb'
+  )
+  const lookup = await maxmind.open(dbPath)
+  const ipDetails = lookup.get(ip)
   if (ipDetails) {
     return {
       city: ipDetails.city.names.en,
@@ -42,16 +42,16 @@ async function getLocationFromIp(headers, requestIP) {
         code: ipDetails.continent.code,
       },
       coords: {
-        type: "Point",
+        type: 'Point',
         coordinates: [
           ipDetails.location.longitude,
           ipDetails.location.latitude,
         ],
       },
       timezone: ipDetails.location.time_zone,
-    };
+    }
   } else {
-    return null;
+    return null
   }
 }
 
@@ -62,7 +62,7 @@ function getUtmData(meta) {
     utm_campaign: meta?.utm_campaign,
     utm_term: meta?.utm_term,
     utm_content: meta?.utm_content,
-  };
+  }
 }
 
 function getBrowsingData({ browser, os, meta, platform, ipDetails }) {
@@ -76,7 +76,7 @@ function getBrowsingData({ browser, os, meta, platform, ipDetails }) {
     coords: ipDetails?.coords,
     timezone: ipDetails?.timezone,
     meta,
-  };
+  }
 }
 
-export { getUserAgentDetails, getLocationFromIp, getUtmData, getBrowsingData };
+export { getUserAgentDetails, getLocationFromIp, getUtmData, getBrowsingData }
