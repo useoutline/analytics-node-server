@@ -4,8 +4,10 @@ import EventModel from "../models/Event.model.js";
 import SessionModel from "../models/Session.model.js";
 import AppModel from "../models/App.model.js";
 import {
+  getBrowsingData,
   getLocationFromIp,
   getUserAgentDetails,
+  getUtmData,
 } from "../utils/getBrowsingData.js";
 
 async function trackEvent(request) {
@@ -14,8 +16,7 @@ async function trackEvent(request) {
     const { browser, os, platform, meta } = getUserAgentDetails(
       request.headers
     );
-    const ip = request.headers["x-forwarded-for"] || request.ip;
-    const ipDetails = await getLocationFromIp(ip);
+    const ipDetails = await getLocationFromIp(request.headers, request.ip);
     const body = JSON.parse(request.body);
 
     const event = new EventModel({
@@ -24,16 +25,15 @@ async function trackEvent(request) {
       event: body.event,
       eventType: body.type,
       page: body.page,
-      browsingData: {
+      browsingData: getBrowsingData({
         browser,
         os,
         platform,
-        city: ipDetails?.city,
-        country: ipDetails?.country,
-        coords: ipDetails?.coords,
-        timezone: ipDetails?.timezone,
         meta,
-      },
+        ipDetails,
+      }),
+      referrer: body.page.meta?.referrer,
+      utm: getUtmData(body.page.meta),
     });
     await event.save();
     return { success: true };
@@ -45,8 +45,7 @@ async function trackEvent(request) {
 async function trackSession(request) {
   console.log("Tracking Session", Date.now());
   const { browser, os, platform, meta } = getUserAgentDetails(request.headers);
-  const ip = request.headers["x-forwarded-for"] || request.ip;
-  const ipDetails = await getLocationFromIp(ip);
+  const ipDetails = await getLocationFromIp(request.headers, request.ip);
   const body = JSON.parse(request.body);
 
   const session = new SessionModel({
@@ -55,16 +54,15 @@ async function trackSession(request) {
     visitedAt: body.visitedAt,
     leftAt: body.leftAt,
     page: body.page,
-    browsingData: {
+    browsingData: getBrowsingData({
       browser,
       os,
       platform,
-      city: ipDetails?.city,
-      country: ipDetails?.country,
-      coords: ipDetails?.coords,
-      timezone: ipDetails?.timezone,
       meta,
-    },
+      ipDetails,
+    }),
+    referrer: body.page.meta?.referrer,
+    utm: getUtmData(body.page.meta),
   });
   await session.save();
   return { success: true };

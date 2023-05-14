@@ -17,7 +17,13 @@ function getUserAgentDetails(headers) {
   };
 }
 
-async function getLocationFromIp(ip) {
+async function getLocationFromIp(headers, requestIP) {
+  const ip =
+    headers["x-forwarded-for"] ||
+    headers["X-Forwarded-For"] ||
+    headers["x-real-ip"] ||
+    headers["X-Real-IP"] ||
+    requestIP;
   const dbPath = path.resolve(
     dirname(fileURLToPath(import.meta.url)),
     "../../maxmind/GeoLite2-City.mmdb"
@@ -27,7 +33,14 @@ async function getLocationFromIp(ip) {
   if (ipDetails) {
     return {
       city: ipDetails.city.names.en,
-      country: ipDetails.country.names.en,
+      country: {
+        name: ipDetails.country.names.en,
+        code: ipDetails.country.iso_code,
+      },
+      continent: {
+        name: ipDetails.continent.names.en,
+        code: ipDetails.continent.code,
+      },
       coords: {
         type: "Point",
         coordinates: [
@@ -42,4 +55,28 @@ async function getLocationFromIp(ip) {
   }
 }
 
-export { getUserAgentDetails, getLocationFromIp };
+function getUtmData(meta) {
+  return {
+    utm_source: meta?.utm_source,
+    utm_medium: meta?.utm_medium,
+    utm_campaign: meta?.utm_campaign,
+    utm_term: meta?.utm_term,
+    utm_content: meta?.utm_content,
+  };
+}
+
+function getBrowsingData({ browser, os, meta, platform, ipDetails }) {
+  return {
+    browser,
+    os,
+    platform,
+    city: ipDetails?.city,
+    country: ipDetails?.country,
+    continent: ipDetails?.continent,
+    coords: ipDetails?.coords,
+    timezone: ipDetails?.timezone,
+    meta,
+  };
+}
+
+export { getUserAgentDetails, getLocationFromIp, getUtmData, getBrowsingData };

@@ -14,7 +14,20 @@ const BrowsingDataSchema = new mongoose.Schema({
     type: String,
   },
   country: {
-    type: String,
+    name: {
+      type: String,
+    },
+    code: {
+      type: String,
+    },
+  },
+  continent: {
+    name: {
+      type: String,
+    },
+    code: {
+      type: String,
+    },
   },
   coords: {
     type: {
