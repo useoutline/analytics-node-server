@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
 import { randomUUID } from 'crypto'
 
+const USER_MODEL_ERRORS = {
+  EMAIL_REQUIRED: 'EMAIL_REQUIRED',
+  EMAIL_ALREADY_EXISTS: 'EMAIL_ALREADY_EXISTS',
+}
+
 const userSchema = new mongoose.Schema(
   {
     _id: {
@@ -9,8 +14,8 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
-      unique: true,
+      required: [true, USER_MODEL_ERRORS.EMAIL_REQUIRED],
+      unique: [true, USER_MODEL_ERRORS.EMAIL_ALREADY_EXISTS],
     },
     password: {
       type: String,

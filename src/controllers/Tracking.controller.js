@@ -10,7 +10,7 @@ import {
   getUtmData,
 } from '../utils/getBrowsingData.js'
 
-async function trackEvent(request) {
+async function trackEvent(request, reply) {
   try {
     console.log('Tracking Event', Date.now())
     const { browser, os, platform, meta } = getUserAgentDetails(request.headers)
@@ -30,13 +30,14 @@ async function trackEvent(request) {
         meta,
         ipDetails,
       }),
-      referrer: body.page.meta?.referrer,
-      utm: getUtmData(body.page.meta),
+      referrer: body.page?.meta?.referrer,
+      utm: getUtmData(body.page?.meta),
     })
     await event.save()
     return { success: true }
   } catch (err) {
     console.error(err)
+    reply.status(500)
   }
 }
 
@@ -44,6 +45,7 @@ async function trackSession(request) {
   console.log('Tracking Session', Date.now())
   const { browser, os, platform, meta } = getUserAgentDetails(request.headers)
   const ipDetails = await getLocationFromIp(request.headers, request.ip)
+
   const body = JSON.parse(request.body)
 
   const session = new SessionModel({
@@ -59,8 +61,8 @@ async function trackSession(request) {
       meta,
       ipDetails,
     }),
-    referrer: body.page.meta?.referrer,
-    utm: getUtmData(body.page.meta),
+    referrer: body.page?.meta?.referrer,
+    utm: getUtmData(body.page?.meta),
   })
   await session.save()
   return { success: true }

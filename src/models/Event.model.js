@@ -3,20 +3,26 @@ import BrowsingDataSchema from './BrowsingData.schema.js'
 import PageDataSchema from './PageData.schema.js'
 import UtmSchema from './Utm.schema.js'
 
+const EVENT_MODEL_ERRORS = {
+  APP_REQUIRED: 'APP_REQUIRED',
+  USER_REQUIRED: 'USER_REQUIRED',
+  EVENT_REQUIRED: 'EVENT_REQUIRED',
+}
+
 const eventSchema = new mongoose.Schema(
   {
     app: {
       type: String,
-      required: true,
+      required: [true, EVENT_MODEL_ERRORS.APP_REQUIRED],
       ref: 'apps',
     },
     user: {
       type: String,
-      required: true,
+      required: [true, EVENT_MODEL_ERRORS.USER_REQUIRED],
     },
     event: {
       type: String,
-      required: true,
+      required: [true, EVENT_MODEL_ERRORS.EVENT_REQUIRED],
     },
     eventType: {
       type: String,

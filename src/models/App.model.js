@@ -1,41 +1,13 @@
 import mongoose from 'mongoose'
 import { nanoid } from 'nanoid'
 
-const APP_ERRORS_CODE_START = 1000
-const APP_EVENT_ERRORS_CODE_START = 1100
-
 const APP_MODEL_ERRORS = {
-  APP_NAME_REQUIRED: {
-    code: APP_ERRORS_CODE_START + 1,
-    type: 'APP_NAME_REQUIRED',
-    message: 'App name is required',
-  },
-  EVENT_REQUIRED: {
-    code: APP_EVENT_ERRORS_CODE_START + 1,
-    type: 'EVENT_REQUIRED',
-    message: 'Event is required',
-  },
-  SELECTOR_TYPE_REQUIRED: {
-    code: APP_EVENT_ERRORS_CODE_START + 2,
-    type: 'SELECTOR_TYPE_REQUIRED',
-    message: 'Selector type is required',
-  },
-  SELECTOR_TYPE_INVALID: {
-    code: APP_EVENT_ERRORS_CODE_START + 3,
-    type: 'SELECTOR_TYPE_INVALID',
-    message: 'Selector type is invalid',
-    expected: ['id', 'text', 'selector'],
-  },
-  SELECTOR_REQUIRED: {
-    code: APP_EVENT_ERRORS_CODE_START + 4,
-    type: 'SELECTOR_REQUIRED',
-    message: 'Selector is required',
-  },
-  TRIGGER_REQUIRED: {
-    code: APP_EVENT_ERRORS_CODE_START + 5,
-    type: 'TRIGGER_REQUIRED',
-    message: 'Trigger is required',
-  },
+  APP_NAME_REQUIRED: 'APP_NAME_REQUIRED',
+  EVENT_REQUIRED: 'EVENT_REQUIRED',
+  SELECTOR_TYPE_REQUIRED: 'SELECTOR_TYPE_REQUIRED',
+  SELECTOR_TYPE_INVALID: 'SELECTOR_TYPE_INVALID',
+  SELECTOR_REQUIRED: 'SELECTOR_REQUIRED',
+  TRIGGER_REQUIRED: 'TRIGGER_REQUIRED',
 }
 
 const appSchema = new mongoose.Schema(
