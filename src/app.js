@@ -1,14 +1,13 @@
 import fastifyServer from 'fastify'
-import cors from '@fastify/cors'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import cron from 'node-cron'
 import fs from 'fs'
 
-dotenv.config()
-
-import trackingRoutes from './routes/tracking.routes.js'
 import { downloadMaxmindDB } from './utils/maxmind.js'
+import { registerRoutes } from './routes/registerRoutes.js'
+
+dotenv.config()
 
 let fastifyOptions = {}
 
@@ -29,17 +28,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const fastify = fastifyServer(fastifyOptions)
-fastify.register(cors, () => {
-  return (req, callback) => {
-    const corsOptions = {
-      origin: '*',
-      methods: ['GET', 'POST', 'OPTIONS'],
-    }
-
-    callback(null, corsOptions)
-  }
-})
-fastify.register(trackingRoutes, { prefix: '/v1/:analyticsId' })
+registerRoutes(fastify)
 
 const start = async () => {
   try {

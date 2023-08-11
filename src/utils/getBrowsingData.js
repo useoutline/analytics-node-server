@@ -55,16 +55,6 @@ async function getLocationFromIp(headers, requestIP) {
   }
 }
 
-function getUtmData(meta) {
-  return {
-    utm_source: meta?.utm_source,
-    utm_medium: meta?.utm_medium,
-    utm_campaign: meta?.utm_campaign,
-    utm_term: meta?.utm_term,
-    utm_content: meta?.utm_content,
-  }
-}
-
 function getBrowsingData({ browser, os, meta, platform, ipDetails }) {
   return {
     browser,
@@ -79,4 +69,45 @@ function getBrowsingData({ browser, os, meta, platform, ipDetails }) {
   }
 }
 
-export { getUserAgentDetails, getLocationFromIp, getUtmData, getBrowsingData }
+function getPageData(requestBody) {
+  const pageUrl = new URL(requestBody.page.fullpath)
+  const page = {
+    fullpath: requestBody.page.fullpath,
+    path: pageUrl.pathname,
+    hash: pageUrl.hash,
+    title: requestBody.page.title,
+  }
+  if (pageUrl.search.trim().length) {
+    page.query = Object.fromEntries(pageUrl.searchParams)
+  }
+  return page
+}
+
+function getUtmData(requestBody) {
+  const pageUrl = new URL(requestBody.page.fullpath)
+  if (pageUrl.search.trim().length) {
+    const utmParams = [
+      'utm_source',
+      'utm_medium',
+      'utm_campaign',
+      'utm_term',
+      'utm_content',
+    ]
+    const utm = {}
+    pageUrl.searchParams.forEach((value, key) => {
+      if (utmParams.includes(key)) {
+        utm[key] = value
+      }
+    })
+    return utm
+  }
+  return {}
+}
+
+export {
+  getUserAgentDetails,
+  getLocationFromIp,
+  getBrowsingData,
+  getPageData,
+  getUtmData,
+}

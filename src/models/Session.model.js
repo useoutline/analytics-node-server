@@ -19,10 +19,16 @@ const sessionSchema = new mongoose.Schema(
       type: String,
       required: [true, SESSION_MODEL_ERRORS.USER_REQUIRED],
     },
+    sessionId: {
+      type: String,
+    },
     visitedAt: {
-      type: Date,
+      type: Number,
     },
     leftAt: {
+      type: Number,
+    },
+    capturedAt: {
       type: Date,
     },
     page: PageDataSchema,
@@ -34,7 +40,14 @@ const sessionSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    __v: false,
+    versionKey: false,
+    statics: {
+      async createSession(sessionData) {
+        const session = new this(sessionData)
+        await session.save()
+        return session
+      },
+    },
   }
 )
 

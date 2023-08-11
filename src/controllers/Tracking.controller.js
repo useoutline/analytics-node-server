@@ -1,5 +1,3 @@
-import { nanoid } from 'nanoid'
-
 import EventModel from '../models/Event.model.js'
 import SessionModel from '../models/Session.model.js'
 import AppModel from '../models/App.model.js'
@@ -7,22 +5,24 @@ import {
   getBrowsingData,
   getLocationFromIp,
   getUserAgentDetails,
+  getPageData,
   getUtmData,
 } from '../utils/getBrowsingData.js'
+import { StatusCodes } from 'http-status-codes'
 
 async function trackEvent(request, reply) {
   try {
     console.log('Tracking Event', Date.now())
     const { browser, os, platform, meta } = getUserAgentDetails(request.headers)
     const ipDetails = await getLocationFromIp(request.headers, request.ip)
-    const body = JSON.parse(request.body)
+    const body = request.body
 
-    const event = new EventModel({
+    await EventModel.createEvent({
       app: request.params.analyticsId,
       user: body.uid,
       event: body.event,
       eventType: body.type,
-      page: body.page,
+      page: getPageData(body),
       browsingData: getBrowsingData({
         browser,
         os,
@@ -30,52 +30,62 @@ async function trackEvent(request, reply) {
         meta,
         ipDetails,
       }),
-      referrer: body.page?.meta?.referrer,
-      utm: getUtmData(body.page?.meta),
+      referrer: body.page?.referrer,
+      utm: getUtmData(body),
+      capturedAt: Date.now(),
+      sessionId: body.sessionId,
     })
-    await event.save()
     return { success: true }
   } catch (err) {
     console.error(err)
-    reply.status(500)
+    reply.status(StatusCodes.BAD_REQUEST).send({
+      error: true,
+      type: 'VALIDATION_ERROR',
+    })
   }
 }
 
-async function trackSession(request) {
-  console.log('Tracking Session', Date.now())
-  const { browser, os, platform, meta } = getUserAgentDetails(request.headers)
-  const ipDetails = await getLocationFromIp(request.headers, request.ip)
+async function trackSession(request, reply) {
+  try {
+    console.log('Tracking Session', Date.now())
+    const { browser, os, platform, meta } = getUserAgentDetails(request.headers)
+    const ipDetails = await getLocationFromIp(request.headers, request.ip)
 
-  const body = JSON.parse(request.body)
+    const body = request.body
 
-  const session = new SessionModel({
-    app: request.params.analyticsId,
-    user: body.uid,
-    visitedAt: body.visitedAt,
-    leftAt: body.leftAt,
-    page: body.page,
-    browsingData: getBrowsingData({
-      browser,
-      os,
-      platform,
-      meta,
-      ipDetails,
-    }),
-    referrer: body.page?.meta?.referrer,
-    utm: getUtmData(body.page?.meta),
-  })
-  await session.save()
-  return { success: true }
-}
-
-async function getTrackingId() {
-  return { id: `OAU-${nanoid()}` }
+    await SessionModel.createSession({
+      app: request.params.analyticsId,
+      user: body.uid,
+      visitedAt: body.visitedAt,
+      leftAt: body.leftAt,
+      page: getPageData(body),
+      browsingData: getBrowsingData({
+        browser,
+        os,
+        platform,
+        meta,
+        ipDetails,
+      }),
+      referrer: body.page?.referrer,
+      utm: getUtmData(body),
+      capturedAt: Date.now(),
+      sessionId: body.sessionId,
+    })
+    return { success: true }
+  } catch (err) {
+    console.error(err)
+    reply.status(StatusCodes.BAD_REQUEST).send({
+      error: true,
+      type: 'VALIDATION_ERROR',
+    })
+  }
 }
 
 async function getEvents(request) {
   const analyticsId = request.params.analyticsId
-  const { events } = await AppModel.findById(analyticsId, 'events').lean()
+  const { events } = await AppModel.getEventsById(analyticsId)
   return {
+    success: true,
     events,
   }
 }
@@ -83,6 +93,5 @@ async function getEvents(request) {
 export default {
   trackEvent,
   trackSession,
-  getTrackingId,
   getEvents,
 }

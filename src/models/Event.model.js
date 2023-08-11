@@ -33,10 +33,23 @@ const eventSchema = new mongoose.Schema(
       type: String,
     },
     utm: UtmSchema,
+    sessionId: {
+      type: String,
+    },
+    capturedAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
-    __v: false,
+    versionKey: false,
+    statics: {
+      async createEvent(eventData) {
+        const event = new this(eventData)
+        await event.save()
+        return event
+      },
+    },
   }
 )
 

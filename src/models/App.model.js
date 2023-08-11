@@ -64,6 +64,11 @@ const appSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    statics: {
+      async getEventsById(appId) {
+        return await this.findById(appId, 'events').lean()
+      },
+    },
   }
 )
 
